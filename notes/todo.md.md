@@ -1,0 +1,1 @@
+- Setup automation to run lint check periodically
