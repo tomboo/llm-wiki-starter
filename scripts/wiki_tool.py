@@ -29,34 +29,35 @@ def read_frontmatter(path: Path):
         if len(parts) >= 3:
             fm = parts[1]
             data['raw'] = fm
-            # very small parser for simple YAML lists and scalars
-            for line in fm.splitlines():
-                line = line.strip()
-                if not line or line.startswith('#'):
+            # simple, tolerant frontmatter parser: supports scalars and block lists
+            current_key = None
+            for raw_line in fm.splitlines():
+                line = raw_line.rstrip('\n')
+                if not line or line.strip().startswith('#'):
+                    continue
+                stripped = line.strip()
+                if stripped.startswith('- '):
+                    if current_key:
+                        val = stripped[2:].strip().strip('"').strip("'")
+                        data.setdefault(current_key, []).append(val)
                     continue
                 if ':' in line:
-                    k,v = line.split(':',1)
-                    k=k.strip()
-                    v=v.strip()
-                    if v.startswith('[') and v.endswith(']'):
-                        # inline list (very small parser)
-                        items = [x.strip().strip('"').strip("'") for x in v[1:-1].split(',') if x.strip()]
-                        data[k]=items
-                    elif v in ('true','false'):
-                        data[k]= (v=='true')
+                    k, v = line.split(':', 1)
+                    k = k.strip()
+                    v = v.strip()
+                    if v == '':
+                        # start of a block list
+                        current_key = k
+                        data.setdefault(k, [])
                     else:
-                        data[k]=v.strip().strip('"')
-                elif line.startswith('- '):
-                    # naive list collector
-                    # find last key added that is a list
-                    key=None
-                    # look backwards
-                    for prev in reversed(fm.splitlines()[:fm.splitlines().index(line)]):
-                        if ':' in prev:
-                            key=prev.split(':',1)[0].strip()
-                            break
-                    if key:
-                        data.setdefault(key,[]).append(line[2:].strip().strip('"'))
+                        current_key = None
+                        if v.startswith('[') and v.endswith(']'):
+                            items = [x.strip().strip('"').strip("'") for x in v[1:-1].split(',') if x.strip()]
+                            data[k] = items
+                        elif v in ('true', 'false'):
+                            data[k] = (v == 'true')
+                        else:
+                            data[k] = v.strip().strip('"').strip("'")
     return data
 
 
