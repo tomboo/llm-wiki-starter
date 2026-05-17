@@ -9,7 +9,6 @@ sources:
   - "Raw/Sources/How To Build LLM Wiki In Obsidian? 🧠 A Memory Layer For Any Agentic AI.md"
 source_count: 1
 aliases: []
-
 ---
 
 # Memory Layer For Agentic AI
