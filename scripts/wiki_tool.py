@@ -39,8 +39,8 @@ def read_frontmatter(path: Path):
                     k=k.strip()
                     v=v.strip()
                     if v.startswith('[') and v.endswith(']'):
-                        # inline list
-                        items = [x.strip().strip('"\' '\'') for x in v[1:-1].split(',') if x.strip()]
+                        # inline list (very small parser)
+                        items = [x.strip().strip('"').strip("'") for x in v[1:-1].split(',') if x.strip()]
                         data[k]=items
                     elif v in ('true','false'):
                         data[k]= (v=='true')
@@ -87,6 +87,8 @@ def index_wiki():
         if not folder.exists():
             continue
         for f in folder.glob('*.md'):
+            if f.name == 'index.md':
+                continue
             fm = read_frontmatter(f)
             tag = None
             if 'tags' in fm:
