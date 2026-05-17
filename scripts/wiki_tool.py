@@ -89,6 +89,8 @@ def index_wiki():
         for f in folder.glob('*.md'):
             if f.name == 'index.md':
                 continue
+            if f.name == 'index.md':
+                continue
             fm = read_frontmatter(f)
             tag = None
             if 'tags' in fm:
