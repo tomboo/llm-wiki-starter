@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Minimal pre-commit hook for the LLM Wiki starter
+python3 scripts/wiki_tool.py build
+python3 scripts/wiki_tool.py lint
+python3 scripts/wiki_tool.py source-lint || true
+exit 0
