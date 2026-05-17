@@ -10,6 +10,13 @@ for p in ROOT.rglob('*'):
             txt = p.read_text(errors='ignore')
         except Exception:
             continue
+        # skip scanning audit script itself and git/obsidian internal files
+        sp = str(p)
+        if sp.endswith('scripts/audit_public.py'):
+            continue
+        if '/.obsidian/' in sp or '/.git/' in sp or '/.githooks/' in sp or '/scripts/' in sp:
+            # skip development and local config files
+            continue
         if 'BEGIN RSA PRIVATE KEY' in txt or 'PRIVATE KEY' in txt:
             bad.append(f'Possible private key in {p}')
         if '/Users/' in txt:
