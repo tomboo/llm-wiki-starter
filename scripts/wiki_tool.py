@@ -141,6 +141,8 @@ def cmd_lint(args):
         if not folder.exists():
             continue
         for f in folder.glob('*.md'):
+            if f.name == 'index.md':
+                continue
             fm = read_frontmatter(f)
             tags = fm.get('tags',[])
             if isinstance(tags,str):
